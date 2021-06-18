@@ -6,7 +6,7 @@ import com.google.gson.annotations.Expose
 import java.util.*
 
 @Entity(tableName = "Notes")
-sealed class Note(
+data class Note(
     val title: String,
     val content: String,
     val date: Long,
