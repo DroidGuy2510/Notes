@@ -10,4 +10,8 @@ import com.perapps.notes.ui.BaseFragment
 
 class AuthFragment : BaseFragment(R.layout.fragment_auth) {
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+    }
 }
