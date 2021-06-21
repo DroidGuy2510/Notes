@@ -14,6 +14,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -41,8 +42,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideNoteApi(interceptor: BasicAuthInterceptor): NoteApi {
+        val logInterceptor = HttpLoggingInterceptor()
+        logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+
         val client = OkHttpClient.Builder()
             .addInterceptor(interceptor)
+            .addInterceptor(logInterceptor)
             .build()
 
         return Retrofit.Builder()

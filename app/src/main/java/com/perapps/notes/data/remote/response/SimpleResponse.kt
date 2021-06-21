@@ -1,6 +1,6 @@
 package com.perapps.notes.data.remote.response
 
 data class SimpleResponse(
-    val successful : Boolean,
+    val success: Boolean,
     val message: String
 )

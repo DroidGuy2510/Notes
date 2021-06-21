@@ -33,6 +33,17 @@
             motion:layout_constraintEnd_toEndOf="@id/gl_end"
             motion:layout_constraintStart_toStartOf="@id/gl_start"
             motion:layout_constraintTop_toBottomOf="@id/tiet_email" />
+
+        <Constraint
+            android:id="@+id/tiet_confirm_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:alpha=".5"
+            android:visibility="invisible"
+            motion:layout_constraintEnd_toEndOf="@id/gl_end"
+            motion:layout_constraintStart_toStartOf="@id/gl_start"
+            motion:layout_constraintTop_toBottomOf="@id/tiet_password" />
         <Constraint
             android:id="@+id/ll_register"
             android:layout_width="wrap_content"
@@ -97,6 +108,16 @@
             motion:layout_constraintEnd_toEndOf="@id/gl_end"
             motion:layout_constraintStart_toStartOf="@id/gl_start"
             motion:layout_constraintTop_toBottomOf="@id/tiet_email" />
+
+        <Constraint
+            android:id="@+id/tiet_confirm_password"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="30dp"
+            android:alpha="0"
+            motion:layout_constraintEnd_toEndOf="@id/gl_end"
+            motion:layout_constraintStart_toStartOf="@id/gl_start"
+            motion:layout_constraintTop_toBottomOf="@id/tiet_email" />
         <Constraint
             android:id="@+id/ll_register"
             android:layout_width="wrap_content"
@@ -152,7 +173,7 @@
             android:id="@+id/tiet_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="100dp"
             android:visibility="visible"
             motion:layout_constraintEnd_toEndOf="@id/gl_end"
             motion:layout_constraintStart_toStartOf="@id/gl_start"
@@ -161,11 +182,20 @@
             android:id="@+id/tiet_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="25dp"
             android:visibility="visible"
             motion:layout_constraintEnd_toEndOf="@id/gl_end"
             motion:layout_constraintStart_toStartOf="@id/gl_start"
             motion:layout_constraintTop_toBottomOf="@id/tiet_email" />
+        <Constraint
+            android:id="@+id/tiet_confirm_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:visibility="visible"
+            motion:layout_constraintEnd_toEndOf="@id/gl_end"
+            motion:layout_constraintStart_toStartOf="@id/gl_start"
+            motion:layout_constraintTop_toBottomOf="@id/tiet_password" />
         <Constraint
             android:id="@+id/ll_register"
             android:layout_width="wrap_content"
@@ -217,7 +247,7 @@
             android:id="@+id/tiet_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="100dp"
             android:visibility="visible"
             motion:layout_constraintEnd_toEndOf="@id/gl_end"
             motion:layout_constraintStart_toStartOf="@id/gl_start"
@@ -231,6 +261,15 @@
             motion:layout_constraintEnd_toEndOf="@id/gl_end"
             motion:layout_constraintStart_toStartOf="@id/gl_start"
             motion:layout_constraintTop_toBottomOf="@id/tiet_email" />
+        <Constraint
+            android:id="@+id/tiet_confirm_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:alpha="1"
+            motion:layout_constraintEnd_toEndOf="@id/gl_end"
+            motion:layout_constraintStart_toStartOf="@id/gl_start"
+            motion:layout_constraintTop_toBottomOf="@id/tiet_password" />
         <Constraint
             android:id="@+id/tv_logo"
             android:layout_width="wrap_content"

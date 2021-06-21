@@ -5,6 +5,9 @@ object Constants {
     const val DATABASE_NAME = "notes_db"
     const val STORE_NAME = "notes_data_store"
 
+    const val KEY_LOGGED_IN_EMAIL = "KEY_LOGGED_IN_EMAIL"
+    const val KEY_PASSWORD = "KEY_PASSWORD"
+
     //const val BASE_URL = "http://10.0.2.2:8080"     for testing on emulator
     const val BASE_URL = "http://192.168.13.25:8080"
 
