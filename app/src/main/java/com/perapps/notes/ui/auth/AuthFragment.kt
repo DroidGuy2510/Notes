@@ -3,6 +3,7 @@ package com.perapps.notes.ui.auth
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -11,11 +12,17 @@ import androidx.navigation.NavOptions
 import com.perapps.notes.R
 import com.perapps.notes.data.remote.BasicAuthInterceptor
 import com.perapps.notes.databinding.FragmentAuthBinding
+import com.perapps.notes.other.Constants
 import com.perapps.notes.other.Status
 import com.perapps.notes.prefstore.PrefsStore
+import com.perapps.notes.prefstore.dataStore
 import com.perapps.notes.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,6 +33,9 @@ class AuthFragment : BaseFragment(R.layout.fragment_auth) {
 
     @Inject
     lateinit var authInterceptor: BasicAuthInterceptor
+    @Inject
+    lateinit var prefsStore: PrefsStore
+
     private val viewModel: AuthViewModel by viewModels()
 
     private var curEmail: String? = null
@@ -34,6 +44,11 @@ class AuthFragment : BaseFragment(R.layout.fragment_auth) {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.launch {
+            if(isLoggedIn()){
+                authenticateApi(curEmail ?: "", curPassword ?: "" )
+            }
+        }
         requireActivity().requestedOrientation = SCREEN_ORIENTATION_PORTRAIT
 
         _binding = FragmentAuthBinding.bind(view)
@@ -138,6 +153,15 @@ class AuthFragment : BaseFragment(R.layout.fragment_auth) {
             AuthFragmentDirections.actionAuthFragmentToNotesFragment(),
             navOptions
         )
+    }
+
+    private suspend fun isLoggedIn(): Boolean {
+        val userPref = requireContext().dataStore.data.first()
+
+        curEmail = userPref[PrefsStore.LOGGED_IN_USER_EMAIL] ?: Constants.NO_EMAIL
+        curPassword = userPref[PrefsStore.LOGGED_IN_USER_PASSWORD] ?: Constants.NO_PASSWORD
+
+        return curEmail != Constants.NO_EMAIL && curPassword != Constants.NO_PASSWORD
     }
 
     private fun progressVisibility(show: Boolean) {

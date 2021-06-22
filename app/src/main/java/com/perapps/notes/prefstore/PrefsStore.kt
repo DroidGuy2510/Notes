@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.perapps.notes.other.Constants.KEY_LOGGED_IN_EMAIL
 import com.perapps.notes.other.Constants.KEY_PASSWORD
+import com.perapps.notes.other.Constants.NO_EMAIL
+import com.perapps.notes.other.Constants.NO_PASSWORD
 import com.perapps.notes.other.Constants.STORE_NAME
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +24,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class PrefsStore @Inject constructor(
-    @ApplicationContext val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     companion object {
@@ -30,17 +32,7 @@ class PrefsStore @Inject constructor(
         val LOGGED_IN_USER_PASSWORD = stringPreferencesKey(KEY_PASSWORD)
     }
 
-    fun loggedUser(): Flow<String> = context.dataStore.data.catch{ exception -> // 1
-        // dataStore.data throws an IOException if it can't read the data
-        if (exception is IOException) { // 2
-            emit(emptyPreferences())
-        } else {
-            throw exception
-        }
-    }.map {
-        it[LOGGED_IN_USER_EMAIL] ?: ""
-        it[LOGGED_IN_USER_PASSWORD] ?: ""
-    }
+    fun loggedUser(): Flow<Preferences> = context.dataStore.data
 
     suspend fun setLoggedInUser(email: String, password: String) {
         context.dataStore.edit {
