@@ -63,7 +63,7 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
                     // set synced icon
                 }
                 tvDate.text = dateString
-                cvNote.setCardBackgroundColor(Color.parseColor("#${note.color}"))
+                cvNote.setCardBackgroundColor(Color.parseColor(note.color))
                 setOnItemClickListener {
                     onClickListener?.let { click ->
                         click(note)

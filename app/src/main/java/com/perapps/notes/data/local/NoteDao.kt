@@ -24,7 +24,7 @@ interface NoteDao {
     fun observeNoteById(noteId: String): LiveData<Note>
 
     @Query(" SELECT * FROM notes WHERE id = :noteId")
-    suspend fun getNoteById(noteId: String): Note
+    suspend fun getNoteById(noteId: String): Note?
 
     @Query(" SELECT * FROM notes ORDER BY date DESC")
     fun getAllNotes(): Flow<List<Note>>

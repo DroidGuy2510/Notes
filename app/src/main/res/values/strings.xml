@@ -6,4 +6,7 @@
     <string name="sign_in">Sign in</string>
     <string name="register">Register</string>
     <string name="logout">Logout</string>
+    <string name="title">Title</string>
+    <string name="type_something">Type Something....</string>
+    <string name="save">Save</string>
 </resources>

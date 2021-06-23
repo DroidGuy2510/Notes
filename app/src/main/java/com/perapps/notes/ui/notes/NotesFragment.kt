@@ -37,7 +37,7 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().requestedOrientation = SCREEN_ORIENTATION_USER
-        
+
         _binding = FragmentNotesBinding.bind(view)
 
         setupRecyclerView()
@@ -53,6 +53,13 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
     private fun setListeners() {
         binding.ibLogout.setOnClickListener {
             logout()
+        }
+        binding.fabAddNote.setOnClickListener {
+            navController.navigate(
+                NotesFragmentDirections.actionNotesFragmentToAddEditNoteFragment(
+                    ""
+                )
+            )
         }
     }
 
