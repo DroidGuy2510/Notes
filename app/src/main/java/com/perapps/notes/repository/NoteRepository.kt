@@ -3,9 +3,11 @@ package com.perapps.notes.repository
 import android.app.Application
 import android.content.Context
 import com.perapps.notes.data.local.NoteDao
+import com.perapps.notes.data.local.entities.LocallyDeletedNoteID
 import com.perapps.notes.data.local.entities.Note
 import com.perapps.notes.data.remote.NoteApi
 import com.perapps.notes.data.remote.requests.AccountRequest
+import com.perapps.notes.data.remote.requests.DeleteNoteRequest
 import com.perapps.notes.other.Resource
 import com.perapps.notes.other.isConnectedToInternet
 import com.perapps.notes.other.networkBoundResource
@@ -34,7 +36,7 @@ class NoteRepository @Inject constructor(
         }
     }
 
-    suspend fun insertNotes(notes: List<Note>) {
+    private suspend fun insertNotes(notes: List<Note>) {
         notes.forEach { insertNote(it) }
     }
 
@@ -85,5 +87,23 @@ class NoteRepository @Inject constructor(
         } catch (e: Exception) {
             Resource.error("Can`t connect to server", null)
         }
+    }
+
+    suspend fun deleteNote(noteId: String) {
+        val response = try {
+            noteApi.deleteNote(DeleteNoteRequest(noteId))
+        } catch (e: java.lang.Exception) {
+            null
+        }
+        noteDao.deleteNoteById(noteId)
+        if (response == null || !response.isSuccessful) {
+            noteDao.insertLocallyDeletedNoteId(LocallyDeletedNoteID(noteId))
+        }else{
+            deleteLocallyDeletedNoteId(noteId)
+        }
+    }
+
+    suspend fun deleteLocallyDeletedNoteId(deleteNoteId: String) {
+        noteDao.deleteLocallyDeletedNoteId(deleteNoteId)
     }
 }

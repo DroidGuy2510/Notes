@@ -1,13 +1,19 @@
 package com.perapps.notes.ui.notes
 
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.perapps.notes.R
 import com.perapps.notes.adapter.NotesAdapter
 import com.perapps.notes.databinding.FragmentAuthBinding
@@ -30,6 +36,8 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
     private val viewModel: NotesViewModel by viewModels()
     private lateinit var notesAdapter: NotesAdapter
 
+    private val isSwiping = MutableLiveData(false)
+
     @Inject
     lateinit var prefsStore: PrefsStore
 
@@ -47,6 +55,48 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
             navController.navigate(
                 NotesFragmentDirections.actionNotesFragmentToNoteDetailFragment(it.id)
             )
+        }
+    }
+
+    private val swipeItemCallback = object : ItemTouchHelper.SimpleCallback(
+        0, ItemTouchHelper.START or ItemTouchHelper.END
+    ) {
+
+        override fun onChildDraw(
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            dX: Float,
+            dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
+        ) {
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            if(isCurrentlyActive){
+                isSwiping.postValue(true)
+            }else{
+                isSwiping.postValue(false)
+            }
+        }
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.layoutPosition
+            val note = notesAdapter.notes[position]
+            viewModel.deleteNote(note.id)
+            Snackbar.make(requireView(), "Successfully deleted note", Snackbar.LENGTH_LONG).apply {
+                setAction("Undo") {
+                    viewModel.insertNote(note)
+                    viewModel.deleteLocallyDeletedNoteId(note.id)
+                }
+                show()
+            }
         }
     }
 
@@ -92,12 +142,16 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
                 }
             }
         })
+        isSwiping.observe(viewLifecycleOwner, {
+            binding.swipeRefreshLayout.isEnabled = !it
+        })
     }
 
     private fun setupRecyclerView() = binding.rvNotes.apply {
         notesAdapter = NotesAdapter()
         adapter = notesAdapter
         layoutManager = LinearLayoutManager(requireContext())
+        ItemTouchHelper(swipeItemCallback).attachToRecyclerView(this)
     }
 
     private fun logout() {

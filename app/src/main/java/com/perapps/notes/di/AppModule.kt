@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.perapps.notes.data.local.NoteDao
 import com.perapps.notes.data.local.NoteDatabase
+import com.perapps.notes.data.local.entities.MIGRATION_1_2
 import com.perapps.notes.data.remote.BasicAuthInterceptor
 import com.perapps.notes.data.remote.NoteApi
 import com.perapps.notes.other.Constants.BASE_URL
@@ -31,6 +32,7 @@ object AppModule {
     fun provideNotesDatabase(@ApplicationContext context: Context): NoteDatabase {
         return Room
             .databaseBuilder(context, NoteDatabase::class.java, DATABASE_NAME)
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
