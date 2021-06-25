@@ -58,6 +58,7 @@ class AddEditNoteFragment : BaseFragment(R.layout.fragment_add_edit_note) {
         binding.btnSave.setOnClickListener {
             lifecycleScope.launch {
                 saveNote()
+                navController.popBackStack()
             }
         }
 
@@ -85,7 +86,6 @@ class AddEditNoteFragment : BaseFragment(R.layout.fragment_add_edit_note) {
                         binding.etNoteTitle.setText(note.title)
                         binding.etNoteContent.setText(note.content)
                         changeViewNoteColor(note.color)
-                        navController.popBackStack()
                     }
                     Status.ERROR -> {
                         showSnackBar(result.message ?: "An error occurred")

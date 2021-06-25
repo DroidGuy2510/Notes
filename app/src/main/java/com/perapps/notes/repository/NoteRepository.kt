@@ -126,4 +126,6 @@ class NoteRepository @Inject constructor(
             insertNotes(notes.onEach { it.isSynced = true })        // insert to dao could be used
         }
     }
+
+    fun observeNoteById(noteId: String) = noteDao.observeNoteById(noteId)
 }
