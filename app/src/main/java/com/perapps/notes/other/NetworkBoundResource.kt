@@ -23,7 +23,7 @@ inline fun <ResultType, RequestType> networkBoundResource(
         } catch (t: Throwable) {
             onFetchFailed(t)
             query().map {
-                Resource.error("Could`nt reach Server", it)
+                Resource.error("Can`t reach Server", it)
             }
         }
     } else {

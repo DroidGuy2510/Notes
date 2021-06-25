@@ -14,6 +14,7 @@ import com.perapps.notes.other.networkBoundResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 import javax.inject.Inject
 
 class NoteRepository @Inject constructor(
@@ -21,6 +22,8 @@ class NoteRepository @Inject constructor(
     private val noteApi: NoteApi,
     private val context: Application
 ) {
+
+    private var currentResponse: Response<List<Note>>? = null
 
     suspend fun insertNote(note: Note) {
 
@@ -50,11 +53,12 @@ class NoteRepository @Inject constructor(
                 noteDao.getAllNotes()
             },
             fetch = {
-                noteApi.getAllNotes()
+                syncNotes()
+                currentResponse
             },
             saveFetchedData = { response ->
-                response.body()?.let {
-                    insertNotes(it)
+                response?.body()?.let {
+                    insertNotes(it.onEach { note -> note.isSynced = true })
                 }
             },
             shouldFetch = {
@@ -98,12 +102,28 @@ class NoteRepository @Inject constructor(
         noteDao.deleteNoteById(noteId)
         if (response == null || !response.isSuccessful) {
             noteDao.insertLocallyDeletedNoteId(LocallyDeletedNoteID(noteId))
-        }else{
+        } else {
             deleteLocallyDeletedNoteId(noteId)
         }
     }
 
     suspend fun deleteLocallyDeletedNoteId(deleteNoteId: String) {
         noteDao.deleteLocallyDeletedNoteId(deleteNoteId)
+    }
+
+    private suspend fun syncNotes() {
+        val locallyDeletedNote = noteDao.getAllLocallyDeletedNoteIds()
+        locallyDeletedNote.forEach { deletedNote ->
+            deleteNote(deletedNote.deletedNoteId)
+        }
+
+        val unSyncedNotes = noteDao.getAllUnSyncedNotes()
+        unSyncedNotes.forEach { notes -> insertNote(notes) }
+
+        currentResponse = noteApi.getAllNotes()
+        currentResponse?.body()?.let { notes ->
+            noteDao.deleteAllNotes()
+            insertNotes(notes.onEach { it.isSynced = true })        // insert to dao could be used
+        }
     }
 }

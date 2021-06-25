@@ -49,13 +49,9 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
         _binding = FragmentNotesBinding.bind(view)
 
         setupRecyclerView()
+        setUpSwipeToRefreshLayout()
         setListeners()
         subscribeToObservers()
-        notesAdapter.setOnItemClickListener {
-            navController.navigate(
-                NotesFragmentDirections.actionNotesFragmentToNoteDetailFragment(it.id)
-            )
-        }
     }
 
     private val swipeItemCallback = object : ItemTouchHelper.SimpleCallback(
@@ -97,6 +93,12 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
                 }
                 show()
             }
+        }
+    }
+
+    private fun setUpSwipeToRefreshLayout(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.syncAllNotes()
         }
     }
 
@@ -152,6 +154,11 @@ class NotesFragment : BaseFragment(R.layout.fragment_notes) {
         adapter = notesAdapter
         layoutManager = LinearLayoutManager(requireContext())
         ItemTouchHelper(swipeItemCallback).attachToRecyclerView(this)
+        notesAdapter.setOnItemClickListener {
+            navController.navigate(
+                NotesFragmentDirections.actionNotesFragmentToNoteDetailFragment(it.id)
+            )
+        }
     }
 
     private fun logout() {

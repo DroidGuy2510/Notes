@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.perapps.notes.R
 import com.perapps.notes.data.local.entities.Note
 import com.perapps.notes.databinding.ItemNoteBinding
 import java.text.SimpleDateFormat
@@ -58,9 +59,9 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
             binding.apply {
                 tvTitle.text = note.title
                 if (!note.isSynced) {
-                    // set not synced icon
+                    ivSyncStatus.setImageResource(R.drawable.ic_close)
                 } else {
-                    // set synced icon
+                    ivSyncStatus.setImageResource(R.drawable.ic_check)
                 }
                 tvDate.text = dateString
                 cvNote.setCardBackgroundColor(Color.parseColor(note.color))
