@@ -13,7 +13,7 @@ object Constants {
     const val DEFAULT_NOTE_COLOR = "#FFA500"
 
     //const val BASE_URL = "http://10.0.2.2:8080"     for testing on emulator
-    const val BASE_URL = "http://192.168.13.25:8080"
+    const val BASE_URL = "https://192.168.13.25:8001"
 
     val IGNORE_PATH_URLS = listOf("/login", "/register")
 }

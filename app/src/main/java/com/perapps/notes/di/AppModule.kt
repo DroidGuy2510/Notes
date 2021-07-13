@@ -21,7 +21,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import javax.inject.Singleton
+import javax.net.ssl.*
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,12 +49,37 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteApi(interceptor: BasicAuthInterceptor): NoteApi {
+    fun provideOkHttpClient(): OkHttpClient.Builder {
+        val trustAllCertificates: Array<TrustManager> = arrayOf(
+            object : X509TrustManager {
+                override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
+                }
+
+                override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            }
+        )
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustAllCertificates, SecureRandom())
+        return OkHttpClient.Builder()
+            .sslSocketFactory(sslContext.socketFactory, trustAllCertificates[0] as X509TrustManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNoteApi(
+        okHttpClient: OkHttpClient.Builder,
+        interceptor: BasicAuthInterceptor
+    ): NoteApi {
         val logInterceptor = HttpLoggingInterceptor()
         logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
 
 
-        val client = OkHttpClient.Builder()
+        val client = okHttpClient
             .addInterceptor(interceptor)
             .addInterceptor(logInterceptor)
             .build()
@@ -65,7 +93,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCoroutineScope(): CoroutineScope{
+    fun provideCoroutineScope(): CoroutineScope {
         return CoroutineScope(SupervisorJob() + Dispatchers.Default)
     }
 }

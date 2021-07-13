@@ -7,6 +7,7 @@ import com.perapps.notes.data.local.entities.LocallyDeletedNoteID
 import com.perapps.notes.data.local.entities.Note
 import com.perapps.notes.data.remote.NoteApi
 import com.perapps.notes.data.remote.requests.AccountRequest
+import com.perapps.notes.data.remote.requests.AddOwnerRequest
 import com.perapps.notes.data.remote.requests.DeleteNoteRequest
 import com.perapps.notes.other.Resource
 import com.perapps.notes.other.isConnectedToInternet
@@ -83,6 +84,19 @@ class NoteRepository @Inject constructor(
     suspend fun login(email: String, password: String) = withContext(Dispatchers.IO) {
         try {
             val response = noteApi.login(AccountRequest(email, password))
+            if (response.isSuccessful && response.body()!!.success) {
+                Resource.success(response.body()?.message)
+            } else {
+                Resource.error(response.body()?.message ?: response.message(), null)
+            }
+        } catch (e: Exception) {
+            Resource.error("Can`t connect to server", null)
+        }
+    }
+
+    suspend fun addOwnerToNote(ownerEmail: String, noteId: String) = withContext(Dispatchers.IO) {
+        try {
+            val response = noteApi.addOwnerToNote(AddOwnerRequest(ownerEmail, noteId))
             if (response.isSuccessful && response.body()!!.success) {
                 Resource.success(response.body()?.message)
             } else {
