@@ -20,7 +20,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-    name = STORE_NAME
+    name = USER_STORE
 )
 
 class PrefsStore @Inject constructor(
